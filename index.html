@@ -1,0 +1,828 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Deforestation Explained — Research Portal</title>
+<meta name="description" content="An interactive research portal on global deforestation: causes, effects, who is affected, country data, solutions and sources. Student project by Alvin, Lily, Alma and Vani.">
+<style>
+:root{
+  --bg:#f6f5f0; --surface:#ffffff; --surface2:#eef1ea; --ink:#16231b; --muted:#56635a; --line:#d6dbd0;
+  --green:#1f5c3a; --green2:#2f7d4f; --leaf:#7fb069; --navy:#12263f; --amber:#b7791f; --red:#a8321f; --blue:#2b6cb0; --brown:#7a5230;
+  --shadow:0 1px 2px rgba(18,38,31,.06),0 6px 20px rgba(18,38,31,.06);
+  --serif:"Iowan Old Style","Palatino Linotype",Palatino,Georgia,"Times New Roman",serif;
+  --sans:system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+}
+:root[data-theme="dark"]{
+  --bg:#0d1511; --surface:#14201a; --surface2:#1a2a22; --ink:#e8efe9; --muted:#9db0a3; --line:#2a3b32;
+  --green:#6cc08f; --green2:#58b17c; --leaf:#8fd18f; --navy:#0a1220; --amber:#e0a94a; --red:#e8725c; --blue:#6aa9e6; --brown:#c79a6a;
+  --shadow:0 1px 2px rgba(0,0,0,.4),0 6px 20px rgba(0,0,0,.3);
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth;scroll-padding-top:70px}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.65 var(--sans);-webkit-font-smoothing:antialiased}
+a{color:var(--green2)}
+a:hover{text-decoration-thickness:2px}
+h1,h2,h3,h4{font-family:var(--serif);line-height:1.2;margin:0 0 .5em;color:var(--ink)}
+h2{font-size:clamp(1.6rem,3vw,2.2rem)}
+h3{font-size:1.25rem}
+p{margin:0 0 1em}
+.wrap{max-width:1120px;margin:0 auto;padding:0 20px}
+.skip{position:absolute;left:-999px;top:0;background:var(--navy);color:#fff;padding:10px 14px;z-index:100}
+.skip:focus{left:8px;top:8px}
+:focus-visible{outline:3px solid var(--amber);outline-offset:2px;border-radius:4px}
+
+/* top strip + masthead */
+.strip{background:var(--navy);color:#cfd9e6;font-size:.8rem}
+.strip .wrap{display:flex;gap:16px;justify-content:space-between;align-items:center;padding-top:7px;padding-bottom:7px;flex-wrap:wrap}
+.strip b{color:#fff;font-weight:600}
+.masthead{background:linear-gradient(180deg,var(--surface),var(--surface2));border-bottom:1px solid var(--line)}
+.masthead .wrap{display:flex;align-items:center;gap:18px;padding-top:18px;padding-bottom:18px}
+.seal{flex:none;width:64px;height:64px}
+.brand h1{font-size:clamp(1.3rem,3vw,1.9rem);margin:0;letter-spacing:-.01em}
+.brand p{margin:2px 0 0;color:var(--muted);font-size:.9rem}
+.mast-tools{margin-left:auto;display:flex;gap:8px}
+.btn{font:600 .85rem var(--sans);border:1px solid var(--line);background:var(--surface);color:var(--ink);padding:8px 12px;border-radius:8px;cursor:pointer;display:inline-flex;gap:6px;align-items:center}
+.btn:hover{border-color:var(--green2)}
+.btn.primary{background:var(--green);color:#fff;border-color:var(--green)}
+:root[data-theme="dark"] .btn.primary{color:#06210f}
+
+nav.main{position:sticky;top:0;z-index:50;background:var(--navy);box-shadow:0 2px 8px rgba(0,0,0,.2)}
+nav.main .wrap{display:flex;gap:2px;overflow-x:auto;scrollbar-width:none}
+nav.main a{color:#d7e1ee;text-decoration:none;padding:13px 14px;font-size:.88rem;font-weight:600;white-space:nowrap;border-bottom:3px solid transparent}
+nav.main a:hover{color:#fff;background:rgba(255,255,255,.07)}
+nav.main a.on{color:#fff;border-bottom-color:var(--leaf)}
+#bar{position:fixed;left:0;top:0;height:3px;width:0;background:var(--leaf);z-index:60}
+
+/* hero */
+.hero{background:radial-gradient(1200px 400px at 85% -10%,rgba(127,176,105,.25),transparent),linear-gradient(135deg,#0f3b27,#14503a 55%,#1b6b4c);color:#f2f8f3;position:relative;overflow:hidden}
+.hero .wrap{padding-top:64px;padding-bottom:56px;position:relative;z-index:1}
+.hero .kicker{letter-spacing:.14em;text-transform:uppercase;font-size:.78rem;color:#bfe3c6;font-weight:700}
+.hero h2{color:#fff;font-size:clamp(2rem,5.5vw,3.6rem);max-width:18ch;margin:.25em 0 .35em}
+.hero p.lead{font-size:1.15rem;max-width:62ch;color:#dcebdf}
+.trees{position:absolute;right:-20px;bottom:0;width:min(520px,60%);opacity:.25}
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-top:34px}
+.stat{background:rgba(255,255,255,.09);border:1px solid rgba(255,255,255,.18);border-radius:12px;padding:16px;backdrop-filter:blur(3px)}
+.stat strong{display:block;font:700 2rem/1.1 var(--serif);color:#fff}
+.stat span{font-size:.85rem;color:#cfe4d3}
+.stat small{display:block;margin-top:6px;font-size:.75rem;color:#a9cdb2}
+
+/* sections */
+section.sec{padding:64px 0;border-bottom:1px solid var(--line)}
+section.sec:nth-of-type(even){background:var(--surface2)}
+.eyebrow{font-size:.78rem;letter-spacing:.14em;text-transform:uppercase;color:var(--green2);font-weight:800;margin-bottom:6px}
+.sec .intro{max-width:70ch;color:var(--muted);font-size:1.05rem}
+.grid{display:grid;gap:18px}
+.g2{grid-template-columns:repeat(2,1fr)}.g3{grid-template-columns:repeat(3,1fr)}.g4{grid-template-columns:repeat(4,1fr)}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:22px;box-shadow:var(--shadow)}
+.card h3{margin-top:0}
+.card.flat{box-shadow:none}
+.badge{display:inline-block;font-size:.72rem;font-weight:800;letter-spacing:.05em;text-transform:uppercase;border-radius:99px;padding:3px 9px;border:1px solid currentColor}
+.b-ok{color:var(--green2)}.b-warn{color:var(--amber)}.b-bad{color:var(--red)}.b-info{color:var(--blue)}
+.callout{border-left:5px solid var(--amber);background:var(--surface);padding:14px 18px;border-radius:0 10px 10px 0;margin:18px 0}
+.callout.green{border-color:var(--green2)}
+.muted{color:var(--muted)}
+.small{font-size:.85rem}
+sup.cite a{font-size:.72rem;text-decoration:none;font-weight:700;padding:0 1px;color:var(--blue)}
+sup.cite a:hover{background:var(--blue);color:#fff;border-radius:3px}
+#pop{position:fixed;z-index:90;max-width:340px;background:var(--navy);color:#eef3f9;padding:10px 12px;border-radius:8px;font-size:.8rem;line-height:1.4;pointer-events:none;box-shadow:0 8px 24px rgba(0,0,0,.35);display:none}
+
+/* tabs */
+.tabs{display:flex;gap:6px;flex-wrap:wrap;margin:14px 0}
+.tab{font:600 .86rem var(--sans);padding:8px 14px;border-radius:99px;border:1px solid var(--line);background:var(--surface);color:var(--ink);cursor:pointer}
+.tab[aria-selected="true"]{background:var(--green);border-color:var(--green);color:#fff}
+:root[data-theme="dark"] .tab[aria-selected="true"]{color:#06210f}
+.panel[hidden]{display:none}
+
+/* accordion */
+details.acc{background:var(--surface);border:1px solid var(--line);border-radius:12px;margin-bottom:10px;overflow:hidden}
+details.acc summary{cursor:pointer;padding:16px 18px;font-weight:700;list-style:none;display:flex;justify-content:space-between;gap:10px;align-items:center}
+details.acc summary::-webkit-details-marker{display:none}
+details.acc summary::after{content:"+";font-size:1.4rem;color:var(--green2);line-height:1}
+details.acc[open] summary::after{content:"–"}
+details.acc .body{padding:0 18px 16px;color:var(--muted)}
+details.acc .body p:last-child{margin:0}
+
+/* bars */
+.bars{display:flex;flex-direction:column;gap:8px}
+.brow{display:grid;grid-template-columns:150px 1fr 90px;gap:10px;align-items:center;font-size:.9rem;cursor:pointer;padding:3px 6px;border-radius:8px}
+.brow:hover,.brow.sel{background:var(--surface2)}
+.bar-track{height:18px;background:var(--surface2);border-radius:5px;overflow:hidden}
+.sec:nth-of-type(even) .bar-track{background:var(--bg)}
+.bar-fill{height:100%;border-radius:5px;background:var(--green2);width:0;transition:width .8s cubic-bezier(.2,.8,.2,1)}
+.brow .v{text-align:right;font-variant-numeric:tabular-nums;font-weight:700}
+.brow .l{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.rank{color:var(--muted);font-weight:400;margin-right:6px;font-size:.8rem}
+.legend{display:flex;gap:14px;flex-wrap:wrap;font-size:.82rem;color:var(--muted);margin:8px 0}
+.legend i{display:inline-block;width:11px;height:11px;border-radius:3px;margin-right:6px;vertical-align:-1px}
+
+/* controls */
+input[type=search],input[type=number],select{font:inherit;padding:9px 12px;border:1px solid var(--line);border-radius:8px;background:var(--surface);color:var(--ink);width:100%}
+input[type=range]{width:100%;accent-color:var(--green2)}
+label{font-size:.85rem;font-weight:600}
+.row{display:flex;gap:12px;flex-wrap:wrap;align-items:center}
+.chk{display:inline-flex;align-items:center;gap:6px;padding:6px 12px;border:1px solid var(--line);border-radius:99px;background:var(--surface);cursor:pointer;font-size:.85rem}
+.chk input{accent-color:var(--green2)}
+
+/* chart */
+.chart{position:relative}
+.chart svg{width:100%;height:auto;display:block}
+.tip{position:absolute;pointer-events:none;background:var(--navy);color:#fff;padding:8px 10px;border-radius:8px;font-size:.8rem;display:none;white-space:nowrap;z-index:5;box-shadow:0 6px 18px rgba(0,0,0,.3)}
+.axis text{fill:var(--muted);font-size:11px;font-family:var(--sans)}
+.grid-l{stroke:var(--line);stroke-dasharray:3 4}
+
+/* clock */
+.clock{background:var(--navy);color:#fff;border-radius:16px;padding:26px;display:grid;grid-template-columns:1.2fr 1fr;gap:24px;align-items:center}
+.clock .big{font:700 clamp(2.2rem,6vw,4rem)/1 var(--serif);color:var(--leaf);font-variant-numeric:tabular-nums}
+.clock .tabs .tab{background:transparent;color:#d3deeb;border-color:rgba(255,255,255,.25)}
+.clock .tabs .tab[aria-selected="true"]{background:var(--leaf);color:#0b2514;border-color:var(--leaf)}
+
+/* waffle */
+.waffle{display:grid;grid-template-columns:repeat(10,1fr);gap:4px;max-width:340px}
+.waffle i{aspect-ratio:1;border-radius:3px;background:var(--line);transition:background .4s}
+.waffle i.on{background:var(--green2)}
+.waffle i.on2{background:var(--amber)}
+
+/* donut */
+.donut{width:200px;height:200px;flex:none}
+.donut circle{fill:none;stroke-width:6;transition:stroke-dasharray .8s}
+
+/* timeline */
+.tl{position:relative;margin:0;padding:0 0 0 26px;list-style:none;border-left:3px solid var(--line)}
+.tl li{position:relative;margin:0 0 22px;padding-left:10px}
+.tl li::before{content:"";position:absolute;left:-36px;top:5px;width:15px;height:15px;border-radius:50%;background:var(--green2);border:3px solid var(--bg)}
+.tl time{font:700 .85rem var(--sans);color:var(--green2);display:block}
+.tl li.alert::before{background:var(--red)}
+
+/* table */
+table{width:100%;border-collapse:collapse;font-size:.92rem}
+th,td{text-align:left;padding:10px 12px;border-bottom:1px solid var(--line);vertical-align:top}
+th{font-size:.78rem;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
+.src-item{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:14px 16px;margin-bottom:10px;display:grid;grid-template-columns:42px 1fr;gap:12px;scroll-margin-top:80px}
+.src-item:target{border-color:var(--amber);box-shadow:0 0 0 3px rgba(183,121,31,.25)}
+.hero sup.cite a,.clock sup.cite a{color:#bfe0ff}
+.src-item a{word-break:break-all}
+.src-n{font:700 1.3rem var(--serif);color:var(--green2)}
+.src-item h4{font-family:var(--sans);font-size:1rem;margin:0 0 3px}
+
+/* quiz */
+.opt{display:block;width:100%;text-align:left;font:inherit;padding:12px 14px;margin:8px 0;border:1px solid var(--line);border-radius:10px;background:var(--surface);color:var(--ink);cursor:pointer}
+.opt:hover:not(:disabled){border-color:var(--green2)}
+.opt.right{background:rgba(47,125,79,.15);border-color:var(--green2)}
+.opt.wrong{background:rgba(168,50,31,.12);border-color:var(--red)}
+.meter{height:8px;background:var(--line);border-radius:99px;overflow:hidden}
+.meter div{height:100%;background:var(--green2);width:0;transition:width .5s}
+
+/* search overlay */
+#ov{position:fixed;inset:0;background:rgba(5,12,20,.6);z-index:80;display:none;align-items:flex-start;justify-content:center;padding:8vh 16px}
+#ov.open{display:flex}
+#ov .box{background:var(--surface);width:min(680px,100%);border-radius:14px;padding:18px;max-height:80vh;overflow:auto;box-shadow:0 20px 60px rgba(0,0,0,.4)}
+.hit{display:block;padding:10px;border-radius:8px;text-decoration:none;color:var(--ink);border-bottom:1px solid var(--line);font-size:.92rem}
+.hit:hover,.hit:focus{background:var(--surface2)}
+.hit small{display:block;color:var(--green2);font-weight:700;text-transform:uppercase;letter-spacing:.06em;font-size:.7rem}
+mark{background:#ffe08a;color:#111;border-radius:2px}
+.flash{animation:fl 2s}
+@keyframes fl{0%,60%{background:#ffe08a}100%{background:transparent}}
+
+footer{background:var(--navy);color:#b9c7d8;padding:40px 0;font-size:.88rem}
+footer a{color:#cfe4d3}
+.reveal{opacity:0;transform:translateY(14px);transition:opacity .6s,transform .6s}
+.reveal.in{opacity:1;transform:none}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}.reveal{opacity:1;transform:none}html{scroll-behavior:auto}}
+@media (max-width:900px){.g3,.g4{grid-template-columns:repeat(2,1fr)}.stats{grid-template-columns:repeat(2,1fr)}.clock{grid-template-columns:1fr}}
+@media (max-width:620px){.g2,.g3,.g4{grid-template-columns:1fr}.brow{grid-template-columns:110px 1fr 74px}.mast-tools .lbl{display:none}.seal{width:48px;height:48px}.donut{width:160px;height:160px}}
+@media print{.strip,nav.main,#bar,.mast-tools,.tabs,#ov,.btn{display:none!important}section.sec{padding:20px 0;break-inside:avoid}.reveal{opacity:1;transform:none}.hero{background:#fff!important;color:#000}.hero h2,.hero p,.stat strong,.stat span{color:#000!important}details.acc .body{display:block}}
+</style>
+</head>
+<body>
+<a class="skip" href="#main">Skip to main content</a>
+<div id="bar" aria-hidden="true"></div>
+<div id="pop" role="tooltip"></div>
+
+<div class="strip"><div class="wrap">
+  <span><b>Independent student research project</b> · Last updated 8 October 2026</span>
+  <span>Data: FAO · Global Forest Watch / WRI · INPE · World Bank · Our World in Data</span>
+</div></div>
+
+<header class="masthead"><div class="wrap">
+  <svg class="seal" viewBox="0 0 64 64" role="img" aria-label="Portal emblem: a tree inside a circle">
+    <circle cx="32" cy="32" r="30" fill="#1f5c3a" stroke="#7fb069" stroke-width="3"/>
+    <circle cx="32" cy="32" r="24" fill="none" stroke="#bfe3c6" stroke-width="1" stroke-dasharray="2 3"/>
+    <path d="M32 14 L42 28 H36 L45 40 H35 V50 H29 V40 H19 L28 28 H22 Z" fill="#e8f5e9"/>
+  </svg>
+  <div class="brand">
+    <h1>Deforestation Explained</h1>
+    <p>Research Portal · Understanding the Crisis</p>
+  </div>
+  <div class="mast-tools">
+    <button class="btn" id="btnSearch" aria-label="Search the portal">🔍 <span class="lbl">Search</span></button>
+    <button class="btn" id="btnTheme" aria-label="Toggle dark mode">🌓 <span class="lbl">Theme</span></button>
+    <button class="btn" id="btnPrint" aria-label="Print this page">🖨 <span class="lbl">Print</span></button>
+  </div>
+</div></header>
+
+<nav class="main" aria-label="Sections"><div class="wrap" id="navlinks">
+  <a href="#home">Home</a><a href="#about">What &amp; Why</a><a href="#effects">Effects</a><a href="#people">Who it affects</a><a href="#countries">Countries</a><a href="#trends">Trends</a><a href="#perspectives">Perspectives</a><a href="#solutions">Solutions</a><a href="#quiz">Quiz</a><a href="#sources">Sources</a>
+</div></nav>
+
+<main id="main">
+
+<!-- HOME -->
+<section id="home" class="hero">
+  <svg class="trees" viewBox="0 0 520 300" aria-hidden="true"><g fill="#e8f5e9">
+    <path d="M60 300V240H40L80 170H60L100 100 140 170H120L160 240H140V300Z"/>
+    <path d="M200 300V210H170L225 120H200L260 20 320 120H295L350 210H320V300Z"/>
+    <path d="M380 300V250H360L400 190H385L425 130 465 190H450L490 250H470V300Z"/></g></svg>
+  <div class="wrap">
+    <div class="kicker">Presented by Alvin, Lily, Alma &amp; Vani</div>
+    <h2>Deforestation, explained with evidence.</h2>
+    <p class="lead">Forests cover about a third of the world’s land, yet millions of hectares of tree cover disappear every year. This portal brings together our class research and extends it with the latest data from FAO, Global Forest Watch, Brazil’s space agency INPE and the World Bank. Everything on it is interactive and every number is cited.</p>
+    <div class="row" style="margin-top:20px">
+      <a class="btn primary" href="#about">Start reading ↓</a>
+      <a class="btn" href="#clock">Watch the forest-loss clock</a>
+    </div>
+    <div class="stats">
+      <div class="stat"><strong data-count="4.14" data-dec="2" data-suf=" bn ha">0</strong><span>of forest worldwide, 32% of land<sup class="cite" data-s="1"></sup></span></div>
+      <div class="stat"><strong data-count="25.5" data-dec="1" data-suf=" M ha">0</strong><span>tree cover lost globally in 2025<sup class="cite" data-s="2"></sup></span><small>about the size of the UK</small></div>
+      <div class="stat"><strong data-count="42" data-suf="%">0</strong><span>of 2025 tree cover loss came from fire<sup class="cite" data-s="2"></sup></span></div>
+      <div class="stat"><strong data-count="36" data-suf="%">0</strong><span>drop in tropical primary forest loss, 2024→2025<sup class="cite" data-s="2"></sup></span><small>still 46% above a decade ago</small></div>
+    </div>
+  </div>
+</section>
+
+<!-- CLOCK -->
+<section id="clock" class="sec" style="padding:40px 0">
+  <div class="wrap reveal">
+    <div class="clock">
+      <div>
+        <div class="eyebrow" style="color:var(--leaf)">Live estimate</div>
+        <h3 style="color:#fff;margin-bottom:6px">Forest lost since you opened this page</h3>
+        <div class="big" id="clkHa">0.0 ha</div>
+        <p style="margin:8px 0 0;color:#bcd0e4" id="clkSub">0 football fields</p>
+        <div class="tabs" role="tablist" aria-label="Clock basis" id="clkTabs">
+          <button class="tab" role="tab" aria-selected="true" data-rate="25500000">All tree cover loss (2025)</button>
+          <button class="tab" role="tab" aria-selected="false" data-rate="4300000">Tropical primary forest (2025)</button>
+        </div>
+      </div>
+      <div class="small" style="color:#bcd0e4">
+        <p><b style="color:#fff">How it works.</b> This divides the annual 2025 total by the seconds in a year, then counts up in real time. It is an average, not a measurement: real loss is lumpy and peaks in fire and clearing seasons.</p>
+        <p style="margin:0">Tropical primary forest loss in 2025 was about 4.3 million ha, roughly <b style="color:#fff">11 football fields every minute</b>.<sup class="cite" data-s="2"></sup> “Tree cover loss” includes fire and logging where trees may regrow, so it is larger than permanent deforestation.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ABOUT -->
+<section id="about" class="sec">
+  <div class="wrap">
+    <div class="eyebrow">01 · About</div>
+    <h2>What is deforestation, and what causes it?</h2>
+    <p class="intro">Deforestation is the clearing of forested land, cutting down trees so the land can be used for something else. It drives land-use change and can raise the risk of zoonotic disease spillover. Its main drivers are farming, mining, drilling and logging, including for paper and timber.</p>
+
+    <div class="grid g2" style="margin-top:28px">
+      <div class="card reveal">
+        <h3>Where does forest loss come from?</h3>
+        <p class="muted small">Global Forest Watch splits 2001–2025 tree cover loss into permanent <b>deforestation</b> and <b>temporary loss</b> where trees can regrow.<sup class="cite" data-s="6"></sup> Tap a slice or a driver.</p>
+        <div class="row" style="gap:20px;flex-wrap:nowrap;align-items:center">
+          <svg class="donut" viewBox="0 0 40 40" role="img" aria-label="Donut chart: 34% permanent deforestation, 66% temporary loss">
+            <circle cx="20" cy="20" r="15.9155" stroke="var(--line)"/>
+            <circle id="dn1" cx="20" cy="20" r="15.9155" stroke="var(--red)" stroke-dasharray="0 100" transform="rotate(-90 20 20)" style="cursor:pointer"/>
+            <circle id="dn2" cx="20" cy="20" r="15.9155" stroke="var(--amber)" stroke-dasharray="0 100" stroke-dashoffset="-34" transform="rotate(-90 20 20)" style="cursor:pointer"/>
+            <text x="20" y="21" text-anchor="middle" font-size="5" font-family="Georgia,serif" fill="var(--ink)" id="dnTxt">541 M ha</text>
+            <text x="20" y="26" text-anchor="middle" font-size="2.4" fill="var(--muted)">2001–2025</text>
+          </svg>
+          <div>
+            <div class="legend" style="flex-direction:column;gap:6px">
+              <span><i style="background:var(--red)"></i>Deforestation (permanent) · 34% · ~182 M ha</span>
+              <span><i style="background:var(--amber)"></i>Temporary loss · 66% · ~359 M ha</span>
+            </div>
+            <p class="small" id="dnNote" style="margin:8px 0 0">Permanent agriculture accounts for about 172 M ha of the deforestation share, an area larger than Mongolia.</p>
+          </div>
+        </div>
+      </div>
+      <div class="card reveal">
+        <h3>Main causes (from our research)</h3>
+        <div id="causes">
+          <details class="acc" open><summary>🌾 Agriculture expansion</summary><div class="body"><p>Clearing land for crops and cattle pasture is the single biggest permanent driver. In Latin America it accounts for 72% of loss and in Southeast Asia 65%.<sup class="cite" data-s="6"></sup></p></div></details>
+          <details class="acc"><summary>🪵 Commercial logging</summary><div class="body"><p>Logging dominates tree cover loss in Europe (90%) and is a major share in North America (43%). In many managed forests, trees are replanted or regrow.<sup class="cite" data-s="6"></sup></p></div></details>
+          <details class="acc"><summary>🏗 Infrastructure &amp; mining</summary><div class="body"><p>Roads, settlements and mines open up forests. In Madre de Dios, Peru, gold mining causes about 30% of loss. WRI Africa notes mining is a larger indirect driver in the Congo Basin than once recognised.<sup class="cite" data-s="6"></sup><sup class="cite" data-s="2"></sup></p></div></details>
+          <details class="acc"><summary>🔥 Wildfire</summary><div class="body"><p>Fire caused 42% of global tree cover loss in 2025 and nearly half of tropical primary forest loss in 2024, a record.<sup class="cite" data-s="2"></sup><sup class="cite" data-s="4"></sup> Fires in Russia and Canada are mostly in boreal forest, where regrowth is possible.</p></div></details>
+          <details class="acc"><summary>🌱 Shifting cultivation</summary><div class="body"><p>Dominant in Africa (50%) and the DR Congo (83%): small plots cleared, farmed, then left to regrow.<sup class="cite" data-s="6"></sup></p></div></details>
+        </div>
+      </div>
+    </div>
+
+    <div class="card reveal" style="margin-top:18px">
+      <div class="row" style="justify-content:space-between"><h3 style="margin:0">Leading driver by region</h3><span class="small muted">Click a row for detail</span></div>
+      <div class="legend" id="drvLegend"></div>
+      <div class="bars" id="regBars"></div>
+      <p class="small" id="regNote" style="margin:12px 0 0;min-height:3em" aria-live="polite"></p>
+    </div>
+    <div class="callout green reveal"><b>Why this matters for climate:</b> forests remove roughly 16 billion tonnes of CO₂ a year. Tree cover loss from logging and fire has averaged about 8.1 billion tonnes a year over two decades, so the net forest sink is about 7.6 billion tonnes a year. Southeast Asian rainforests have become a net CO₂ source because of high deforestation, while the Amazon and Congo basins remain net sinks.<sup class="cite" data-s="10"></sup></div>
+  </div>
+</section>
+
+<!-- EFFECTS -->
+<section id="effects" class="sec">
+  <div class="wrap">
+    <div class="eyebrow">02 · Effects</div>
+    <h2>What are the effects?</h2>
+    <p class="intro">Deforestation harms the environment and people at the same time. Select a card to see the mechanism and the evidence.</p>
+    <div class="tabs" role="tablist" id="effTabs" aria-label="Effect category">
+      <button class="tab" role="tab" aria-selected="true" data-p="env">Environmental</button>
+      <button class="tab" role="tab" aria-selected="false" data-p="hum">Human</button>
+    </div>
+    <div id="env" class="panel grid g4">
+      <div class="card"><h3>🌡 Climate change</h3><p class="small">Trees absorb CO₂. When they are cut or burned, the carbon is released. Fires alone emitted about 4.1 Gt of greenhouse gases in 2024, more than four times the emissions of all air travel in 2023.<sup class="cite" data-s="4"></sup></p></div>
+      <div class="card"><h3>🦜 Biodiversity loss</h3><p class="small">Forests are habitat for over 80% of terrestrial species.<sup class="cite" data-s="10"></sup> Losing them removes food, shelter and breeding grounds, which can lead to extinction.</p></div>
+      <div class="card"><h3>🏜 Soil erosion</h3><p class="small">Roots hold soil in place. Without them, rain and wind strip rich topsoil, leaving land barren and silting up rivers.</p></div>
+      <div class="card"><h3>💧 Water cycle</h3><p class="small">Trees release moisture through transpiration. Forested watersheds and wetlands supply about three-quarters of accessible freshwater.<sup class="cite" data-s="10"></sup></p></div>
+    </div>
+    <div id="hum" class="panel grid g3" hidden>
+      <div class="card"><h3>🏚 Homelessness</h3><p class="small">Forces millions of Indigenous and local people off their lands when forests are cleared or sold.</p></div>
+      <div class="card"><h3>🦠 Disease</h3><p class="small">Habitat disruption brings people closer to wildlife, raising the chance that animal viruses spill over to humans (zoonotic disease).</p></div>
+      <div class="card"><h3>💸 Poverty</h3><p class="small">Many people depend on forests for food, fuel and income. The World Bank estimates 300–350 million people live in or near forests and largely depend on them, and over a billion rely on forests for jobs, products and income.<sup class="cite" data-s="10"></sup></p></div>
+    </div>
+    <div class="callout reveal"><b>Research note.</b> Our slides say “1.6 billion people” are stripped of food and income. That figure is widely quoted for forest dependence overall, but it describes people who <i>rely</i> on forests, not people who lose everything when forests shrink. We recommend wording it the way the World Bank does. See the <a href="#factcheck">fact-check table</a>.</div>
+  </div>
+</section>
+
+<!-- PEOPLE -->
+<section id="people" class="sec">
+  <div class="wrap">
+    <div class="eyebrow">03 · People &amp; nature</div>
+    <h2>Who does it affect?</h2>
+    <div class="tabs" role="tablist" id="whoTabs" aria-label="Group affected"></div>
+    <div class="card" id="whoCard" aria-live="polite"></div>
+  </div>
+</section>
+
+<!-- COUNTRIES -->
+<section id="countries" class="sec">
+  <div class="wrap">
+    <div class="eyebrow">04 · Countries</div>
+    <h2>What countries does it affect?</h2>
+    <p class="intro">Every country loses some tree cover, but a handful account for most of it. Note that a country’s rank in <b>tree cover loss</b> is not the same as its rank in permanent <b>deforestation</b>. Russia and Canada top the list mostly because of boreal wildfire and logging, where forest can regrow.</p>
+
+    <h3 style="margin-top:30px">A. Our slide’s top five (2001–2025 cumulative)</h3>
+    <div class="grid g4" id="topFive" style="grid-template-columns:repeat(auto-fit,minmax(200px,1fr))"></div>
+    <p class="small muted">Totals are from the team’s original research. We checked the two we could reproduce: Global Forest Watch data sum to 73.1 M ha (Brazil) and 62.5 M ha (Canada) for 2001–2024,<sup class="cite" data-s="7"></sup> so the slide’s 76.2 and 68.9 M ha are consistent with adding 2025. Russia, US and Indonesia totals were not independently reproduced.</p>
+
+    <div class="grid g2" style="margin-top:28px;align-items:start">
+      <div class="card">
+        <h3>B. Country explorer, tree cover loss in 2024</h3>
+        <div class="row" style="margin-bottom:10px">
+          <div style="flex:1;min-width:150px"><input type="search" id="cQ" placeholder="Search a country…" aria-label="Search a country"></div>
+          <div style="flex:1;min-width:150px"><select id="cSort" aria-label="Sort"><option value="d">Largest first</option><option value="a">Smallest first</option><option value="n">A → Z</option></select></div>
+        </div>
+        <div class="bars" id="cBars" style="max-height:470px;overflow:auto;padding-right:6px"></div>
+        <p class="small muted" style="margin:10px 0 0">Selected countries of ~200 in the dataset.<sup class="cite" data-s="7"></sup> Includes all tree cover loss (fire, logging, farming).</p>
+      </div>
+      <div class="card">
+        <h3 id="cTitle">Pick a country</h3>
+        <div id="cDetail" class="small muted">Select any bar to see how big that loss is in familiar units.</div>
+        <hr style="border:0;border-top:1px solid var(--line);margin:18px 0">
+        <h3>C. Annual trend, 2001–2024</h3>
+        <div class="row" id="lcToggles"></div>
+        <div class="chart" id="lc"></div>
+        <p class="small" id="lcNote"></p>
+      </div>
+    </div>
+
+    <div class="grid g2" style="margin-top:18px;align-items:start">
+      <div class="card">
+        <h3>🇧🇷 Case study: Brazil is turning the corner</h3>
+        <p class="small">Brazil still has the largest tropical forest loss in absolute terms, but its official numbers have fallen.</p>
+        <div class="grid g2" style="gap:10px">
+          <div class="card flat" style="padding:14px"><span class="small muted">PRODES Amazon, Aug 2024–Jul 2025<sup class="cite" data-s="8"></sup></span><div style="font:700 1.7rem var(--serif)">5,796 km²</div><span class="badge b-ok">−11.08% vs 6,518</span></div>
+          <div class="card flat" style="padding:14px"><span class="small muted">DETER alerts, Aug 2025–Jul 2026<sup class="cite" data-s="9"></sup></span><div style="font:700 1.7rem var(--serif)">2,874 km²</div><span class="badge b-ok">lowest in series since 2016</span></div>
+        </div>
+        <p class="small" style="margin-top:12px">Change in Amazon alert area by state (DETER, vs previous year):<sup class="cite" data-s="9"></sup></p>
+        <div class="bars" id="brBars"></div>
+        <p class="small muted" style="margin-top:10px">Global Forest Watch also reports Brazil’s <i>non-fire</i> primary forest loss fell 41% in 2025, its lowest on record, but warns that growing fire risk could undo gains.<sup class="cite" data-s="2"></sup> Agência Brasil headlines the DETER fall as 36.87%; the two area figures it gives imply about 36%, so we say “roughly 36–37%”.</p>
+      </div>
+      <div class="card">
+        <h3>🇻🇳 Spotlight: Vietnam</h3>
+        <p class="small">Vietnam had about <b>14.87 million ha</b> of forest on 31 December 2024: just over 10 M ha natural and nearly 5 M ha planted.<sup class="cite" data-s="11"></sup> The national forest-cover rate has been reported at <b>42.02%</b> (2022 figure).<sup class="cite" data-s="12"></sup></p>
+        <div class="meter" style="height:22px;display:flex;border-radius:6px"><div style="width:67%;background:var(--green2);height:100%;border-radius:0"></div><div style="width:33%;background:var(--amber);height:100%;border-radius:0"></div></div>
+        <div class="legend"><span><i style="background:var(--green2)"></i>Natural forest ≈ 10 M ha</span><span><i style="background:var(--amber)"></i>Planted ≈ 5 M ha</span></div>
+        <p class="small">Satellite-based tree cover loss in Vietnam in 2024 was about <b>128,000 ha</b>,<sup class="cite" data-s="7"></sup> and tree cover loss includes harvest of plantations and other temporary loss, so it must not be confused with permanent deforestation. About a third of Vietnam’s forest area is planted forest.</p>
+        <div class="callout" style="margin-bottom:0"><b>Note.</b> The first number counts all tree cover loss (including plantation harvest). The second counts forest area under national definitions. They answer different questions.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- TRENDS -->
+<section id="trends" class="sec">
+  <div class="wrap">
+    <div class="eyebrow">05 · Trends</div>
+    <h2>Is it getting better or worse?</h2>
+    <p class="intro">Both. Long-run deforestation is slowing, but recent years were punctuated by record fire-driven loss. The chart from our slide, “Rising Global Forest Loss (2001–2025)”, is reproduced below with its real values. The latest data add an important twist.</p>
+    <div class="card reveal" style="margin-bottom:18px">
+      <div class="row" style="justify-content:space-between"><h3 style="margin:0">Rising global forest loss, 2001–2025<sup class="cite" data-s="15"></sup></h3>
+        <label class="chk"><input type="checkbox" id="glTrend" checked> Show trend line</label></div>
+      <div class="grid g4" id="glStats" style="margin:14px 0;grid-template-columns:repeat(auto-fit,minmax(170px,1fr))"></div>
+      <div class="chart" id="gl"></div>
+      <p class="small muted" id="glNote" style="margin:10px 0 0"></p>
+    </div>
+    <div class="tabs" role="tablist" id="trTabs" aria-label="Trend view">
+      <button class="tab" role="tab" aria-selected="true" data-p="fao">FAO long-run (million ha/yr)</button>
+      <button class="tab" role="tab" aria-selected="false" data-p="gfw">Latest years (GFW)</button>
+    </div>
+    <div class="card">
+      <div id="trChart" class="bars" style="gap:16px"></div>
+      <p class="small muted" id="trNote" style="margin:14px 0 0"></p>
+    </div>
+
+    <div class="grid g2" style="margin-top:18px;align-items:start">
+      <div class="card">
+        <h3>The world’s forests today (FAO 2025)<sup class="cite" data-s="1"></sup></h3>
+        <div class="tabs" id="wfTabs" role="tablist" aria-label="Waffle view">
+          <button class="tab" role="tab" aria-selected="true" data-w="32">Forest share of land</button>
+          <button class="tab" role="tab" aria-selected="false" data-w="20">Protected</button>
+          <button class="tab" role="tab" aria-selected="false" data-w="8">Planted</button>
+        </div>
+        <div class="row" style="align-items:flex-start;flex-wrap:nowrap;gap:20px">
+          <div class="waffle" id="waffle" aria-hidden="true"></div>
+          <p class="small" id="wfNote" aria-live="polite"></p>
+        </div>
+      </div>
+      <div class="card">
+        <h3>Loss calculator</h3>
+        <p class="small muted">Convert an area to something you can picture.</p>
+        <div class="row" style="margin-bottom:8px">
+          <div style="flex:1;min-width:150px"><label for="haIn">Hectares</label><input type="number" id="haIn" min="0" value="25500000"></div>
+          <div style="flex:1;min-width:150px"><label for="preset">Preset</label>
+            <select id="preset"><option value="25500000">Global tree cover loss 2025</option><option value="30000000">Global tree cover loss 2024</option><option value="6700000">Tropical primary loss 2024</option><option value="4300000">Tropical primary loss 2025</option><option value="4387883">Brazil 2024</option><option value="8569618">Canada 2023</option><option value="128409">Vietnam 2024</option></select></div>
+        </div>
+        <div id="calcOut" class="grid g2" style="gap:10px" aria-live="polite"></div>
+      </div>
+    </div>
+
+    <h3 style="margin-top:34px">Timeline</h3>
+    <ul class="tl">
+      <li><time>2001</time>Annual satellite record of global tree cover loss begins.<sup class="cite" data-s="13"></sup></li>
+      <li><time>2013</time>Hansen et al. publish the first high-resolution global forest change maps in <i>Science</i>.<sup class="cite" data-s="13"></sup></li>
+      <li class="alert"><time>2016</time>Brazil’s tree cover loss peaks in the series at 5.37 M ha.<sup class="cite" data-s="7"></sup></li>
+      <li><time>2021</time>Glasgow Leaders’ Declaration: 140+ countries pledge to halt and reverse forest loss by 2030.<sup class="cite" data-s="2"></sup></li>
+      <li class="alert"><time>2023</time>Canada records its highest annual loss in the series: 8.57 M ha, driven by wildfire.<sup class="cite" data-s="7"></sup></li>
+      <li class="alert"><time>2024</time>Record year: 30 M ha of tree cover lost; fires drive nearly half of tropical primary forest loss.<sup class="cite" data-s="4"></sup></li>
+      <li><time>Oct 2025</time>FAO’s Global Forest Resources Assessment: deforestation slowed to 10.9 M ha/yr (2015–2025) from 17.6 M ha/yr in the 1990s.<sup class="cite" data-s="1"></sup></li>
+      <li><time>Apr 2026</time>GFW: tropical primary forest loss falls 36% in 2025 to 4.3 M ha, but fires remain a threat.<sup class="cite" data-s="2"></sup></li>
+      <li><time>Aug 2026</time>INPE: Amazon deforestation alerts hit their lowest level in the DETER series.<sup class="cite" data-s="9"></sup></li>
+    </ul>
+    <div class="callout reveal"><b>Off track for 2030.</b> Current global forest loss is about 70% above the level needed to meet the 2030 goal.<sup class="cite" data-s="2"></sup> In 2024, WRI estimated deforestation would need to fall about 20% each year to get there.<sup class="cite" data-s="4"></sup></div>
+  </div>
+</section>
+
+<!-- PERSPECTIVES -->
+<section id="perspectives" class="sec">
+  <div class="wrap">
+    <div class="eyebrow">06 · Perspectives</div>
+    <h2>Two perspectives on deforestation</h2>
+    <p class="intro">People disagree about how to weigh forests against economic needs. Understanding both helps explain why solutions are hard.</p>
+    <div class="tabs" id="pvTabs" role="tablist" aria-label="Perspective">
+      <button class="tab" role="tab" aria-selected="true" data-p="pv1">🌳 Environment &amp; conservation</button>
+      <button class="tab" role="tab" aria-selected="false" data-p="pv2">🏭 Economy &amp; development</button>
+      <button class="tab" role="tab" aria-selected="false" data-p="pv3">🤝 Common ground</button>
+    </div>
+    <div id="pv1" class="panel card"><h3>Protect the forest</h3><p>This side opposes deforestation, arguing for the rights of Indigenous people who depend on forests for shelter and for the habitat of over 80% of terrestrial species.<sup class="cite" data-s="10"></sup> They point to carbon storage, clean water and disease risk as costs that fall on everyone.</p><p class="small muted">Evidence they cite: forests hold 714 Gt of carbon;<sup class="cite" data-s="1"></sup> protected areas cover about 813 M ha (≈20% of forests).<sup class="cite" data-s="1"></sup></p></div>
+    <div id="pv2" class="panel card" hidden><h3>Use the land to grow</h3><p>This side supports clearing land for commercial crops, mining and energy, arguing that agriculture, minerals and infrastructure create jobs, food and income, particularly in lower-income countries that want to develop.</p><p class="small muted">Evidence they cite: permanent agriculture is the main permanent driver of forest loss (about 172 M ha since 2001),<sup class="cite" data-s="6"></sup> and forests also employ people in forestry and timber.</p></div>
+    <div id="pv3" class="panel card" hidden><h3>Where the two sides can meet</h3>
+      <ul><li><b>Grow more on less land.</b> Raising yields and restoring degraded pasture reduces pressure to clear new forest.</li>
+      <li><b>Pay for standing forests.</b> Land rights, carbon finance and deforestation-free supply chains reward keeping trees.</li>
+      <li><b>Plant and manage sustainably.</b> Planted forests are about 8% of the world’s forest area (≈312 M ha) and supply timber with less pressure on natural forest.<sup class="cite" data-s="1"></sup></li></ul>
+      <p class="small muted">This summary is the team’s analysis, not a quotation from a source.</p></div>
+  </div>
+</section>
+
+<!-- SOLUTIONS -->
+<section id="solutions" class="sec">
+  <div class="wrap">
+    <div class="eyebrow">07 · Solutions</div>
+    <h2>What can be done?</h2>
+    <div class="grid g4" id="solCards" style="margin-top:20px"></div>
+    <div class="card" style="margin-top:22px">
+      <div class="row" style="justify-content:space-between"><h3 style="margin:0">Your action checklist</h3><span class="small muted" id="plN">0 of 8</span></div>
+      <div class="meter" style="margin:10px 0 14px"><div id="plBar"></div></div>
+      <div class="grid g2" id="plList" style="gap:8px"></div>
+      <p class="small muted" style="margin:12px 0 0">Your ticks are saved in this browser only.</p>
+    </div>
+  </div>
+</section>
+
+<!-- QUIZ -->
+<section id="quiz" class="sec">
+  <div class="wrap">
+    <div class="eyebrow">08 · Test yourself</div>
+    <h2>Deforestation quiz</h2>
+    <div class="card" style="max-width:760px">
+      <div class="row" style="justify-content:space-between"><span class="small muted" id="qN"></span><span class="small" id="qS"></span></div>
+      <div class="meter" style="margin:8px 0 16px"><div id="qBar"></div></div>
+      <h3 id="qQ"></h3>
+      <div id="qO"></div>
+      <div id="qE" class="callout green" style="display:none" aria-live="polite"></div>
+      <div class="row" style="margin-top:10px"><button class="btn primary" id="qNext" style="display:none">Next →</button><button class="btn" id="qReset" style="display:none">Try again</button></div>
+    </div>
+  </div>
+</section>
+
+<!-- GLOSSARY -->
+<section id="glossary" class="sec">
+  <div class="wrap">
+    <div class="eyebrow">09 · Reference</div>
+    <h2>Glossary</h2>
+    <input type="search" id="gQ" placeholder="Filter terms…" aria-label="Filter glossary" style="max-width:360px;margin-bottom:16px">
+    <div class="grid g2" id="gList"></div>
+  </div>
+</section>
+
+<!-- SOURCES -->
+<section id="sources" class="sec">
+  <div class="wrap">
+    <div class="eyebrow">10 · Citations</div>
+    <h2>Sources &amp; methodology</h2>
+    <p class="intro">Our original slides cited “Google, Google AI, ChatGPT”. Those are search tools, not sources, so for this portal each claim was re-checked against primary or authoritative publications, listed below. Hover or click any bracketed number in the text to jump here.</p>
+    <input type="search" id="sQ" placeholder="Filter sources…" aria-label="Filter sources" style="max-width:360px;margin:6px 0 16px">
+    <div id="srcList"></div>
+
+    <h3 id="factcheck" style="margin-top:36px">Fact-check of the original slides</h3>
+    <div class="card" style="overflow:auto;padding:0"><table>
+      <thead><tr><th>Claim in our presentation</th><th>Status</th><th>What the evidence says</th></tr></thead>
+      <tbody id="fcBody"></tbody></table></div>
+
+    <h3 style="margin-top:36px">Methodology &amp; limits</h3>
+    <div class="grid g2">
+      <div class="card flat"><b>Tree cover loss ≠ deforestation.</b> Global Forest Watch (University of Maryland) measures the removal of woody vegetation at least 5 m tall at 30 m resolution. It includes plantations, fire and logging where trees may regrow.<sup class="cite" data-s="3"></sup> FAO’s deforestation figures count permanent conversion to other land uses and are reported by countries.<sup class="cite" data-s="1"></sup> They should not be compared directly.</div>
+      <div class="card flat"><b>Official vs satellite numbers differ.</b> Brazil’s PRODES (annual, official), DETER (near-real-time alerts) and UMD data use different definitions, minimum areas and reporting periods, so the percentage changes differ.<sup class="cite" data-s="3"></sup></div>
+      <div class="card flat"><b>Rounding &amp; comparisons.</b> “Size of the UK/Denmark” are rough comparisons from the sources. The ~30 M ha global total for 2024 is a rounded figure.</div>
+      <div class="card flat"><b>Global series.</b> The yearly global chart uses the team’s CSV for slide 8 (rounded to 0.1 M ha) and was cross-checked: it sums to the 2001–2025 total WRI reports. Brazil and Canada series come from Our World in Data (2001–2024).</div>
+    </div>
+    <div class="row" style="margin-top:22px"><button class="btn" id="btnCite">📋 Copy suggested citation for this portal</button><span class="small muted" id="citeMsg"></span></div>
+  </div>
+</section>
+</main>
+
+<footer><div class="wrap">
+  <div class="grid g3" style="gap:30px">
+    <div><b style="color:#fff;font-family:var(--serif);font-size:1.1rem">Deforestation Explained</b><p>Research Portal by Alvin, Lily, Alma and Vani.</p></div>
+    <div><b style="color:#fff">Navigate</b><p><a href="#about">What &amp; Why</a> · <a href="#countries">Countries</a> · <a href="#solutions">Solutions</a> · <a href="#sources">Sources</a></p></div>
+    <div><b style="color:#fff">Disclaimer</b><p>An independent student project. It is not affiliated with, or endorsed by, any organisation cited. Figures were checked on 8 October 2026 and may be revised by their publishers.</p></div>
+  </div>
+</div></footer>
+
+<div id="ov" role="dialog" aria-modal="true" aria-label="Search"><div class="box">
+  <input type="search" id="oQ" placeholder="Search the whole portal… (try ‘Brazil’, ‘fire’, ‘carbon’)" aria-label="Search the portal">
+  <div id="oR" style="margin-top:10px"></div>
+</div></div>
+
+<script>
+"use strict";
+/* ---------- helpers ---------- */
+const $=(s,r=document)=>r.querySelector(s), $$=(s,r=document)=>[...r.querySelectorAll(s)];
+const fmt=n=>Math.round(n).toLocaleString("en-US");
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const store={get(k,d){try{const v=localStorage.getItem(k);return v==null?d:JSON.parse(v)}catch(e){return d}},set(k,v){try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}}};
+const FIELD_HA=0.714; // 105 m x 68 m pitch
+
+/* ---------- sources ---------- */
+const SRC=[
+ {t:"Global deforestation slows, but forests remain under pressure, FAO report shows (Global Forest Resources Assessment 2025)",p:"Food and Agriculture Organization of the United Nations",d:"21 Oct 2025",u:"https://www.fao.org/newsroom/detail/global-deforestation-slows--but-forests-remain-under-pressure--fao-report-shows/en",n:"Forest area (4.14 bn ha, 32%), deforestation and net-loss rates, protected and planted forest, carbon."},
+ {t:"RELEASE: Tropical Rainforest Loss Drops 36% in 2025, but Fires Threaten Global Progress",p:"World Resources Institute / Global Forest Watch",d:"29 Apr 2026",u:"https://www.wri.org/news/release-tropical-rainforest-loss-drops-36-2025-fires-threaten-global-progress",n:"2025 global tree cover loss (25.5 M ha), tropical primary loss (4.3 M ha), fire share, country notes, 2030 gap."},
+ {t:"Global Forest Watch’s 2025 Tree Cover Loss Data Explained",p:"Global Nature Watch (WRI)",d:"2026",u:"https://www.globalnaturewatch.org/blog/data-and-tools/2025-tree-cover-loss-data-explained/",n:"Brazil, Colombia and Indonesia comparisons; dataset definitions and caveats."},
+ {t:"RELEASE: Global Forest Loss Shatters Records in 2024, Fueled by Massive Fires",p:"World Resources Institute",d:"2025",u:"https://www.wri.org/news/release-global-forest-loss-shatters-records-2024-fueled-massive-fires",n:"2024 record: 30 M ha tree cover loss, 6.7 M ha tropical primary loss, fire emissions 4.1 Gt."},
+ {t:"Global Forest Watch’s 2024 Tree Cover Loss Data Explained",p:"Global Nature Watch (WRI)",d:"2025",u:"https://globalnaturewatch.org/blog/data-and-tools/2024-tree-cover-loss-data-explained/",n:"Indonesia and Brazil 2024 primary forest loss, tropical comparisons."},
+ {t:"New Data Shows What’s Driving Forest Loss Around the World",p:"World Resources Institute",d:"2026",u:"https://www.wri.org/insights/forest-loss-drivers-data-trends",n:"Driver breakdown 2001–2025: deforestation 34% vs temporary loss 66%; regional shares."},
+ {t:"Tree cover loss (annual, by country; Global Forest Watch / University of Maryland data)",p:"Our World in Data",d:"accessed Oct 2026",u:"https://ourworldindata.org/grapher/tree-cover-loss",n:"Annual hectares by country, 2001–2024; Brazil and Canada series; 2024 country values."},
+ {t:"Nota técnica: Estimativa PRODES 2025",p:"INPE, Brazilian National Institute for Space Research",d:"15 Oct 2025",u:"https://www.gov.br/inpe/pt-br/assuntos/ultimas-noticias/20251015Nota_tcnica_EstimativaPRODES_2025.pdf",n:"Amazon deforestation 5,796 km² (Aug 2024–Jul 2025), −11.08% vs 6,518 km²."},
+ {t:"Amazon deforestation falls 36.87% over past year",p:"Agência Brasil",d:"10 Aug 2026",u:"https://agenciabrasil.ebc.com.br/en/meio-ambiente/noticia/2026-08/amazon-deforestation-falls-3687-over-past-year",n:"DETER alerts Aug 2025–Jul 2026: 2,874 km², state breakdown."},
+ {t:"Deforestation: Accelerating climate change and threatening biodiversity (Data Blog)",p:"World Bank, Thijs Benschop",d:"25 Oct 2023",u:"https://blogs.worldbank.org/en/opendata/deforestation-accelerating-climate-change-and-threatening-biodiversity",n:"Habitat for >80% of terrestrial species; livelihoods; carbon removal 16 Gt CO₂/yr."},
+ {t:"Vietnam boasts over 14.87 million hectares of forest in 2024",p:"Vietnam Law Magazine",d:"22 Apr 2025",u:"https://vietnamlawmagazine.vn/vietnam-boasts-over-1487-million-hectares-of-forest-in-2024-74027.html",n:"Total, natural and planted forest area on 31 Dec 2024."},
+ {t:"Vietnam’s forest coverage remains at 42.02%: agriculture ministry",p:"VTV (Vietnam Television)",d:"Jul 2023",u:"https://english.vtv.vn/news/vietnams-forest-coverage-remains-at-4202-agriculture-ministry-20230701171850271.htm",n:"National forest cover rate reported by the Ministry of Agriculture and Rural Development."},
+ {t:"High-Resolution Global Maps of 21st-Century Forest Cover Change",p:"Hansen, M. C. et al., Science 342(6160)",d:"2013",u:"https://doi.org/10.1126/science.1244693",n:"Method behind the University of Maryland / Global Forest Watch tree cover loss data."},
+ {t:"Original class presentation sources: “Google, Google AI, ChatGPT”; picture credit “When A Teen Goes Green”; chart “According to Global Nature Watch”",p:"Team slides (superseded)",d:"2026",u:"",n:"Replaced by the primary sources above. Not citable as references."},
+ {t:"Annual global tree cover loss 2001–2025 (CSV behind the slide-8 chart, “Rising Global Forest Loss”)",p:"Team data file; slide attributes the chart to Global Nature Watch",d:"2026",u:"",n:"Annual values in million hectares, rounded to 0.1 M ha. Sums to 541.6 M ha, matching WRI’s 2001–2025 total (182 + 359 M ha)."}
+];
+const sup=document;
+$$("sup.cite[data-s]").forEach(s=>{const n=+s.dataset.s;s.innerHTML=`<a href="#s${n}" aria-label="Source ${n}" data-n="${n}">[${n}]</a>`});
+$("#srcList").innerHTML=SRC.map((s,i)=>`<div class="src-item" id="s${i+1}" data-q="${esc((s.t+s.p+s.n).toLowerCase())}"><div class="src-n">${i+1}</div><div><h4>${esc(s.t)}</h4><div class="small muted">${esc(s.p)} · ${esc(s.d)}</div><p class="small" style="margin:6px 0 0">${esc(s.n)}</p>${s.u?`<a class="small" href="${s.u}" target="_blank" rel="noopener noreferrer">${esc(s.u.replace(/^https?:\/\//,"").slice(0,70))}${s.u.length>78?"…":""}</a>`:""}</div></div>`).join("");
+$("#sQ").addEventListener("input",e=>{const q=e.target.value.toLowerCase();$$(".src-item").forEach(el=>el.style.display=el.dataset.q.includes(q)?"":"none")});
+const pop=$("#pop");
+document.addEventListener("mouseover",e=>{const a=e.target.closest("sup.cite a");if(!a){pop.style.display="none";return}const s=SRC[a.dataset.n-1];pop.innerHTML=`<b>[${a.dataset.n}] ${esc(s.p)}</b><br>${esc(s.t)}<br><span style="opacity:.7">${esc(s.d)}</span>`;pop.style.display="block";const r=a.getBoundingClientRect();pop.style.left=Math.min(innerWidth-350,Math.max(8,r.left-20))+"px";pop.style.top=(r.bottom+8>innerHeight-110?r.top-pop.offsetHeight-8:r.bottom+8)+"px"});
+
+/* ---------- theme / print / progress / scrollspy ---------- */
+const root=document.documentElement;
+const th=store.get("theme",matchMedia("(prefers-color-scheme: dark)").matches?"dark":"light");root.dataset.theme=th;
+$("#btnTheme").onclick=()=>{root.dataset.theme=root.dataset.theme==="dark"?"light":"dark";store.set("theme",root.dataset.theme)};
+$("#btnPrint").onclick=()=>print();
+addEventListener("scroll",()=>{const h=document.documentElement;$("#bar").style.width=(h.scrollTop/(h.scrollHeight-h.clientHeight)*100)+"%"},{passive:true});
+const links=$$("#navlinks a"),secs=links.map(a=>$(a.getAttribute("href")));
+const spy=()=>{let cur=0;secs.forEach((s,i)=>{if(s&&s.getBoundingClientRect().top<140)cur=i});links.forEach((a,i)=>a.classList.toggle("on",i===cur))};
+addEventListener("scroll",spy,{passive:true});spy();
+const io=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting){e.target.classList.add("in");io.unobserve(e.target)}}),{threshold:.12});
+$$(".reveal").forEach(el=>io.observe(el));
+/* count-up */
+const cio=new IntersectionObserver(es=>es.forEach(e=>{if(!e.isIntersecting)return;const el=e.target,to=+el.dataset.count,dec=+(el.dataset.dec||0),suf=el.dataset.suf||"";const t0=performance.now();(function f(t){const k=Math.min(1,(t-t0)/1400),v=to*(1-Math.pow(1-k,3));el.textContent=v.toFixed(dec)+suf;if(k<1)requestAnimationFrame(f)})(t0);cio.unobserve(el)}),{threshold:.4});
+$$("[data-count]").forEach(el=>cio.observe(el));
+
+/* ---------- generic tabs ---------- */
+function tabs(container,onSel){const t=$$(".tab",container);t.forEach(b=>b.addEventListener("click",()=>{t.forEach(x=>x.setAttribute("aria-selected",x===b));onSel(b)}))}
+tabs($("#effTabs"),b=>{$("#env").hidden=b.dataset.p!=="env";$("#hum").hidden=b.dataset.p!=="hum"});
+tabs($("#pvTabs"),b=>["pv1","pv2","pv3"].forEach(id=>$("#"+id).hidden=id!==b.dataset.p));
+
+/* ---------- clock ---------- */
+let rate=25500000,t0=performance.now();
+tabs($("#clkTabs"),b=>{rate=+b.dataset.rate;t0=performance.now()});
+setInterval(()=>{const s=(performance.now()-t0)/1000,ha=rate/31536000*s;$("#clkHa").textContent=ha.toFixed(1)+" ha";$("#clkSub").textContent=fmt(ha/FIELD_HA)+" football fields · "+(ha/100).toFixed(2)+" km²"},100);
+
+/* ---------- donut ---------- */
+const dnIO=new IntersectionObserver(es=>{if(es[0].isIntersecting){$("#dn1").setAttribute("stroke-dasharray","34 66");$("#dn2").setAttribute("stroke-dasharray","66 34");dnIO.disconnect()}},{threshold:.3});dnIO.observe($("#dn1"));
+$("#dn1").onclick=()=>{$("#dnNote").textContent="Deforestation (34%, ~182 M ha): land converted to a new use. Permanent agriculture is about 94% of it (172 M ha). Hard commodities such as mining and energy are just under 1%."};
+$("#dn2").onclick=()=>{$("#dnNote").textContent="Temporary loss (66%, ~359 M ha): wildfire, logging and shifting cultivation, where forest can regrow. Other natural disturbances (storms, floods, pests) are 1.6%."};
+
+/* ---------- regions ---------- */
+const DRV={ag:["Permanent agriculture","var(--amber)"],shift:["Shifting cultivation","var(--brown)"],fire:["Wildfire","var(--red)"],log:["Logging","var(--blue)"]};
+$("#drvLegend").innerHTML=Object.values(DRV).map(d=>`<span><i style="background:${d[1]}"></i>${d[0]}</span>`).join("");
+const REG=[
+ ["Europe","log",90,"Logging drives 90% of tree cover loss in Europe, and 98% in Sweden (6.3 M ha). The land is generally replanted or regenerates."],
+ ["DR Congo","shift",83,"Shifting cultivation accounts for 83% of loss (18 M ha). 6.9 M ha of it was primary forest outside the usual cultivation cycle."],
+ ["Russia","fire",74,"Wildfire accounts for 74% of Russia’s loss, about 68 M ha. Across Russia and the Asian mainland it is 63%."],
+ ["Latin America","ag",72,"Permanent agriculture drives 72% of loss. In Bolivia it is 55% (5.8 M ha)."],
+ ["Southeast Asia","ag",65,"Permanent agriculture drives 65% of loss across the region."],
+ ["Australia & Oceania","fire",57,"Wildfire accounts for 57% of loss."],
+ ["North America","fire",52,"Wildfire accounts for 52% and logging 43%. In Colorado, bark beetles and other natural disturbances account for 26% (140,000 ha)."],
+ ["Africa (overall)","shift",50,"Shifting cultivation is the main driver at 50%, followed by permanent agriculture at 42%."]
+];
+function bars(el,rows,opt={}){el.innerHTML=rows.map((r,i)=>`<div class="brow" data-i="${i}" tabindex="0" role="button" aria-label="${esc(r.l)} ${esc(r.v)}"><div class="l">${r.rank?`<span class="rank">${r.rank}</span>`:""}${esc(r.l)}</div><div class="bar-track"><div class="bar-fill" style="background:${r.c||"var(--green2)"}" data-w="${r.w}"></div></div><div class="v">${esc(r.v)}</div></div>`).join("");
+ requestAnimationFrame(()=>requestAnimationFrame(()=>$$(".bar-fill",el).forEach(b=>b.style.width=b.dataset.w+"%")));
+ if(opt.click)$$(".brow",el).forEach(b=>{const go=()=>{$$(".brow",el).forEach(x=>x.classList.toggle("sel",x===b));opt.click(+b.dataset.i)};b.onclick=go;b.onkeydown=e=>{if(e.key==="Enter"||e.key===" "){e.preventDefault();go()}}})}
+bars($("#regBars"),REG.map(r=>({l:r[0],v:r[2]+"% · "+DRV[r[1]][0].split(" ")[0].toLowerCase(),w:r[2],c:DRV[r[1]][1]})),{click:i=>$("#regNote").innerHTML=`<b>${REG[i][0]}.</b> ${REG[i][3]}`});
+$("#regNote").innerHTML="<span class='muted'>Select a region to read more. Peru’s Madre de Dios is a notable exception: gold mining causes about 30% of loss there (125,000 ha).</span>";
+
+/* ---------- who ---------- */
+const WHO=[
+ ["🏘 Indigenous & local communities","Around 1.6 billion people worldwide are often cited as living in or relying on forests and rural areas for food, water and resources such as wood. When the forest shrinks they must travel further for firewood and water, leaving less time for school or paid work. The World Bank’s narrower estimate is 300–350 million people who live in or near forests and largely depend on them.","10"],
+ ["👷 Forestry & local workers","Our research found that roughly 42–50 million people work in forestry and timber. Where forest resources decline, regional economies built on them can contract. (This worker figure was not independently re-verified in our update; treat it as an estimate.)",""],
+ ["🐆 Wildlife & plants","Forests are habitat for over 80% of terrestrial species. Animals lose food, shelter and corridors, and many species can be driven to extinction. In 2024, 17 of the 20 countries with the most primary forest had higher loss than when the 2021 Glasgow declaration was signed.","10,4"],
+ ["🌍 Everyone","Trees absorb CO₂. Without them, much more carbon stays in the atmosphere, accelerating global warming and worsening extreme weather. Fire-driven loss in 2024 alone emitted about 4.1 gigatonnes of greenhouse gases.","4"]
+];
+$("#whoTabs").innerHTML=WHO.map((w,i)=>`<button class="tab" role="tab" aria-selected="${i===0}" data-i="${i}">${w[0]}</button>`).join("");
+const showWho=i=>{const w=WHO[i];$("#whoCard").innerHTML=`<h3>${w[0]}</h3><p style="margin:0">${w[1]} ${w[2].split(",").filter(Boolean).map(n=>`<sup class="cite"><a href="#s${n}" data-n="${n}">[${n}]</a></sup>`).join("")}</p>`};
+showWho(0);tabs($("#whoTabs"),b=>showWho(+b.dataset.i));
+
+/* ---------- top five ---------- */
+const TOP5=[["Russia",92.1,"Wildfires and logging","Wildfire accounts for 74% of Russia’s tree cover loss.","Not reproduced"],["Brazil",76.2,"Cattle ranching, agriculture and fires","2001–2024 series sums to 73.1 M ha.","Consistent"],["Canada",68.9,"Severe wildfires and logging","2001–2024 series sums to 62.5 M ha; 2025 was its second-worst fire year (5.3 M ha burned).","Consistent"],["United States",51,"Logging and urbanisation","Wildfire 52% and logging 43% across North America.","Not reproduced"],["Indonesia",33,"Oil palm, commodity expansion and fires","Southeast Asia: permanent agriculture drives 65% of loss.","Not reproduced"]];
+$("#topFive").innerHTML=TOP5.map((t,i)=>`<div class="card reveal in" style="padding:18px"><span class="rank">#${i+1}</span><h3 style="margin:2px 0">${t[0]}</h3><div style="font:700 1.9rem var(--serif);color:var(--green2)">${t[1]} M ha</div><p class="small" style="margin:6px 0"><b>Driven by:</b> ${t[2]}</p><p class="small muted" style="margin:0">${t[3]}</p><span class="badge ${t[4]==="Consistent"?"b-ok":"b-warn"}" style="margin-top:8px">${t[4]}</span></div>`).join("");
+
+/* ---------- country explorer ---------- */
+const C24={"Russia":5177630,"Canada":5164922,"Brazil":4387883,"Bolivia":1812578,"United States":1594603,"DR Congo":1375674,"Indonesia":1119481,"China":673569,"Laos":351069,"Mexico":330263,"Sweden":315303,"Mozambique":298308,"Angola":282734,"Malaysia":282432,"Myanmar":276568,"Peru":268020,"Paraguay":265671,"Finland":233586,"Madagascar":230974,"Zambia":229226,"Tanzania":225553,"Colombia":212750,"Argentina":202720,"Australia":180504,"Cameroon":178796,"Liberia":166485,"Côte d’Ivoire":165110,"Nicaragua":157942,"Guinea":146770,"Venezuela":144477,"Guatemala":141961,"Thailand":141565,"Sierra Leone":130659,"Vietnam":128409,"India":125678,"Congo":114287,"Ghana":107910,"Guyana":107173,"Nigeria":105593,"Cambodia":93417,"Germany":89432,"Papua New Guinea":81946,"Ukraine":80150,"France":78513,"Spain":77940,"Honduras":74931,"Poland":71484,"Belarus":71081,"Norway":66267,"Uganda":64803,"Ecuador":61943,"Central African Republic":60455,"Philippines":59070,"Japan":53588,"Chile":47606,"Portugal":43375,"Türkiye":39866,"South Africa":39484,"New Zealand":39449,"Gabon":28942,"Ethiopia":27783,"United Kingdom":22786,"Panama":21537,"South Korea":15595,"Kenya":14057,"Costa Rica":8285};
+let cSel=null;
+function renderC(){const q=$("#cQ").value.trim().toLowerCase(),s=$("#cSort").value;let a=Object.entries(C24).filter(e=>e[0].toLowerCase().includes(q));
+ a.sort(s==="d"?(x,y)=>y[1]-x[1]:s==="a"?(x,y)=>x[1]-y[1]:(x,y)=>x[0].localeCompare(y[0]));
+ const mx=Math.max(...Object.values(C24));
+ bars($("#cBars"),a.map((e,i)=>({l:e[0],rank:i+1,v:fmt(e[1]),w:Math.max(1,e[1]/mx*100),c:e[0]===cSel?"var(--amber)":""})),{click:i=>{cSel=a[i][0];showC(cSel,a[i][1])}});
+ if(!a.length)$("#cBars").innerHTML='<p class="muted small">No match.</p>'}
+function showC(n,ha){$("#cTitle").textContent=n+" · 2024";$("#cDetail").className="small";$("#cDetail").innerHTML=`<div style="font:700 1.8rem var(--serif);color:var(--green2)">${fmt(ha)} ha</div><ul style="margin:8px 0 0;padding-left:18px"><li>≈ <b>${fmt(ha/FIELD_HA)}</b> football fields</li><li>≈ <b>${fmt(ha/100)}</b> km²</li><li>≈ <b>${(ha/30000000*100).toFixed(1)}%</b> of the ~30 M ha lost globally</li><li>≈ <b>${(ha/525600).toFixed(2)}</b> ha every minute on average</li></ul>`;$$("#cBars .brow").forEach(b=>b.classList.toggle("sel",$(".l",b).textContent.replace(/^\d+/,"")===n))}
+$("#cQ").addEventListener("input",renderC);$("#cSort").addEventListener("change",renderC);renderC();showC("Brazil",C24["Brazil"]);cSel="Brazil";
+
+/* Brazil states */
+const ST=[["Pará",987.27,-25.5],["Mato Grosso",834.41,-49],["Amazonas",433.9,-46.7],["Roraima",272.6,32.5],["Acre",153.8,-35.3],["Rondônia",114.3,-41.2]];
+bars($("#brBars"),ST.map(s=>({l:s[0],v:(s[2]>0?"+":"")+s[2]+"%",w:s[1]/987.27*100,c:s[2]>0?"var(--red)":"var(--green2)"})),{click:i=>0});
+const brB=$$("#brBars .brow");brB.forEach((b,i)=>b.title=ST[i][0]+": "+ST[i][1]+" km² of alerts");
+
+/* line chart */
+const YEARS=Array.from({length:24},(_,i)=>2001+i);
+const BR=[2735788.8,3499865.5,3241964.2,3841170.2,3479552,2870101.8,2613972.2,2436643,1811003.9,2679643.8,1914531.5,2889743,1936836.4,2682760.8,2218443,5371321,4509085,2945258,2693011.8,3286618.5,2985832.2,3303933.8,2803516.2,4387883];
+const CA=[1348426.9,2305882.2,1602971.5,2697031.5,2913513.8,2397679.2,2110263.2,1940560.2,1542952.8,2095241.6,2151859.5,2530040.5,2794492.5,2634632.8,2729794.5,2079920.8,2557080.5,2140162.2,2171913,1191176.8,2522271,2297729,8569618,5164922];
+const LS=[{n:"Brazil",c:"#2f7d4f",v:BR,on:true},{n:"Canada",c:"#c0392b",v:CA,on:true}];
+$("#lcToggles").innerHTML=LS.map((s,i)=>`<label class="chk"><input type="checkbox" data-i="${i}" ${s.on?"checked":""}><i style="width:10px;height:10px;border-radius:3px;background:${s.c}"></i>${s.n}</label>`).join("");
+$$("#lcToggles input").forEach(c=>c.onchange=()=>{LS[c.dataset.i].on=c.checked;drawLC()});
+function drawLC(){const W=720,H=300,L=48,R=14,T=14,B=28,on=LS.filter(s=>s.on);const mx=Math.max(1,...on.flatMap(s=>s.v))*1.08;
+ const x=i=>L+i*(W-L-R)/(YEARS.length-1),y=v=>T+(H-T-B)*(1-v/mx);
+ let g="";for(let k=0;k<=4;k++){const v=mx*k/4;g+=`<line class="grid-l" x1="${L}" x2="${W-R}" y1="${y(v)}" y2="${y(v)}"/><text x="${L-6}" y="${y(v)+4}" text-anchor="end">${(v/1e6).toFixed(1)}M</text>`}
+ YEARS.forEach((yr,i)=>{if(i%3===0)g+=`<text x="${x(i)}" y="${H-8}" text-anchor="middle">${yr}</text>`});
+ const paths=on.map(s=>`<path d="${s.v.map((v,i)=>(i?"L":"M")+x(i).toFixed(1)+" "+y(v).toFixed(1)).join("")}" fill="none" stroke="${s.c}" stroke-width="2.6" stroke-linejoin="round"/>`).join("");
+ $("#lc").innerHTML=`<svg viewBox="0 0 ${W} ${H}" class="axis" role="img" aria-label="Line chart of annual tree cover loss for Brazil and Canada, 2001 to 2024">${g}${paths}<line id="lcv" y1="${T}" y2="${H-B}" stroke="var(--muted)" stroke-dasharray="4 4" style="display:none"/><g id="lcd"></g><rect x="${L}" y="${T}" width="${W-L-R}" height="${H-T-B}" fill="transparent" id="lcr"/></svg><div class="tip" id="lcT"></div>`;
+ const svg=$("#lc svg"),tip=$("#lcT");
+ const mv=e=>{const r=svg.getBoundingClientRect(),px=(e.clientX-r.left)/r.width*W;const i=Math.max(0,Math.min(YEARS.length-1,Math.round((px-L)/(W-L-R)*(YEARS.length-1))));
+  const lv=$("#lcv");lv.setAttribute("x1",x(i));lv.setAttribute("x2",x(i));lv.style.display="";
+  $("#lcd").innerHTML=on.map(s=>`<circle cx="${x(i)}" cy="${y(s.v[i])}" r="4.5" fill="${s.c}" stroke="#fff" stroke-width="1.5"/>`).join("");
+  tip.style.display="block";tip.innerHTML=`<b>${YEARS[i]}</b><br>`+on.map(s=>`<span style="color:${s.c==="#c0392b"?"#ff9d8f":"#9fe0b4"}">●</span> ${s.n}: ${fmt(s.v[i])} ha`).join("<br>");
+  const tx=x(i)/W*r.width;tip.style.left=Math.min(r.width-170,Math.max(0,tx+12))+"px";tip.style.top="10px"};
+ const rect=$("#lcr");rect.addEventListener("mousemove",mv);rect.addEventListener("touchmove",e=>mv(e.touches[0]),{passive:true});rect.addEventListener("mouseleave",()=>{tip.style.display="none";$("#lcv").style.display="none";$("#lcd").innerHTML=""});
+ $("#lcNote").innerHTML="Brazil’s series peaks in 2016 (5.37 M ha) and again in 2024 (4.39 M ha, a fire-heavy year). Canada’s 2023 spike (8.57 M ha) coincides with an exceptional wildfire season.<sup class='cite'><a href='#s7' data-n='7'>[7]</a></sup> Hover or touch the chart for values."}
+drawLC();
+
+/* ---------- global series ---------- */
+const GY=Array.from({length:25},(_,i)=>2001+i);
+const GV=[13.3,16.4,14.4,19.9,18.1,17.6,18.4,18.6,16.9,18.5,17.5,23.4,20.6,23.6,19.6,29.6,29.4,24.7,24.1,25.8,25.2,22.8,28.2,29.6,25.4];
+const avg=a=>a.reduce((x,y)=>x+y,0)/a.length, sumG=GV.reduce((x,y)=>x+y,0);
+(function(){const n=GV.length,mx=GY.reduce((a,y)=>a+y,0)/n,my=avg(GV);let nu=0,de=0;GY.forEach((y,i)=>{nu+=(y-mx)*(GV[i]-my);de+=(y-mx)**2});const sl=nu/de,ic=my-sl*mx;
+ const a1=avg(GV.slice(0,5)),a2=avg(GV.slice(-5));
+ $("#glStats").innerHTML=[["2001 → 2025",GV[0]+" → "+GV[24]+" M ha","+"+Math.round((GV[24]/GV[0]-1)*100)+"%"],["Peak years","29.6 M ha","2016 and 2024"],["5-year average",a1.toFixed(1)+" → "+a2.toFixed(1)+" M ha","2001–05 vs 2021–25"],["Trend","+"+sl.toFixed(2)+" M ha / yr","linear fit, 2001–2025"]].map(c=>`<div class="card flat" style="padding:12px"><div class="small muted">${c[0]}</div><div style="font:700 1.25rem var(--serif)">${c[1]}</div><div class="small muted">${c[2]}</div></div>`).join("");
+ window.drawGL=function(){const W=720,H=320,L=44,R=14,T=14,B=28,mxv=32;const x=i=>L+i*(W-L-R)/(n-1),y=v=>T+(H-T-B)*(1-v/mxv);let g="";
+  for(let k=0;k<=4;k++){const v=mxv*k/4;g+=`<line class="grid-l" x1="${L}" x2="${W-R}" y1="${y(v)}" y2="${y(v)}"/><text x="${L-6}" y="${y(v)+4}" text-anchor="end">${v}M</text>`}
+  GY.forEach((yr,i)=>{if(i%4===0)g+=`<text x="${x(i)}" y="${H-8}" text-anchor="middle">${yr}</text>`});
+  const area=`M${x(0)} ${y(0)} `+GV.map((v,i)=>"L"+x(i).toFixed(1)+" "+y(v).toFixed(1)).join("")+` L${x(n-1)} ${y(0)}Z`;
+  const line=GV.map((v,i)=>(i?"L":"M")+x(i).toFixed(1)+" "+y(v).toFixed(1)).join("");
+  const tr=$("#glTrend").checked?`<line x1="${x(0)}" y1="${y(sl*2001+ic)}" x2="${x(n-1)}" y2="${y(sl*2025+ic)}" stroke="var(--amber)" stroke-width="2" stroke-dasharray="6 5"/>`:"";
+  const dots=GV.map((v,i)=>(v===29.6||i===n-1)?`<circle cx="${x(i)}" cy="${y(v)}" r="4" fill="var(--red)"/>`:"").join("");
+  $("#gl").innerHTML=`<svg viewBox="0 0 ${W} ${H}" class="axis" role="img" aria-label="Line chart of global tree cover loss each year from 2001 (13.3 million hectares) to 2025 (25.4 million hectares)">${g}<path d="${area}" fill="var(--green2)" opacity=".15"/><path d="${line}" fill="none" stroke="var(--green2)" stroke-width="2.8" stroke-linejoin="round"/>${tr}${dots}<line id="glv" y1="${T}" y2="${H-B}" stroke="var(--muted)" stroke-dasharray="4 4" style="display:none"/><circle id="gld" r="5" fill="var(--green2)" stroke="#fff" stroke-width="2" style="display:none"/><rect id="glr" x="${L}" y="${T}" width="${W-L-R}" height="${H-T-B}" fill="transparent"/></svg><div class="tip" id="glT"></div>`;
+  const svg=$("#gl svg"),tip=$("#glT");const mv=e=>{const r=svg.getBoundingClientRect(),px=(e.clientX-r.left)/r.width*W;const i=Math.max(0,Math.min(n-1,Math.round((px-L)/(W-L-R)*(n-1))));
+   const lv=$("#glv");lv.setAttribute("x1",x(i));lv.setAttribute("x2",x(i));lv.style.display="";const d=$("#gld");d.setAttribute("cx",x(i));d.setAttribute("cy",y(GV[i]));d.style.display="";
+   const ch=i?((GV[i]/GV[i-1]-1)*100):null;tip.style.display="block";tip.innerHTML=`<b>${GY[i]}</b><br>${GV[i]} M ha`+(ch===null?"":`<br><span style="opacity:.8">${ch>=0?"+":""}${ch.toFixed(0)}% vs ${GY[i-1]}</span>`);tip.style.left=Math.min(r.width-120,Math.max(0,x(i)/W*r.width+12))+"px";tip.style.top="10px"};
+  const rc=$("#glr");rc.addEventListener("mousemove",mv);rc.addEventListener("touchmove",e=>mv(e.touches[0]),{passive:true});rc.addEventListener("mouseleave",()=>{tip.style.display="none";$("#glv").style.display="none";$("#gld").style.display="none"})};
+ $("#glNote").innerHTML=`The yearly values add up to <b>${sumG.toFixed(1)} M ha</b> for 2001–2025, which matches WRI’s 2001–2025 total (182 M ha deforestation + 359 M ha temporary loss ≈ 541 M ha).<sup class="cite"><a href="#s6" data-n="6">[6]</a></sup> Rounding differs slightly from press headlines (for example 29.6 vs “30 M ha” for 2024, and 25.4 vs “25.5 M ha” for 2025), because publishers round and revise data versions. Loss is volatile: fire years such as 2016 and 2024 spike, and 2025 fell 14% from the 2024 peak, but the long-run trend is upward. Hover or touch the chart.`;
+ drawGL();$("#glTrend").onchange=drawGL})();
+
+/* ---------- trends ---------- */
+const TR={
+ fao:{rows:[["Deforestation","1990–2000",17.6,"2015–2025",10.9],["Net forest loss","1990s",10.7,"2015–2025",4.12],["Forest expansion","2000–2015",9.88,"2015–2025",6.78]],unit:"M ha/yr",note:"FAO: deforestation has slowed in all regions. Net loss falls further because of forest expansion (planting and natural regrowth), but expansion has also slowed. Naturally regenerating forest is down 324 M ha since 1990, and the largest recent declines are in Africa and South America.",cite:1},
+ gfw:{rows:[["Global tree cover loss","2024",30,"2025",25.5],["Tropical primary forest loss","2024",6.7,"2025",4.3]],unit:"M ha",note:"2025 was lower than the 2024 record, but fire share remained high (42%) and a 2026 El Niño raises the risk. Primary-forest loss is still 46% above a decade ago.",cite:2}};
+function drawTR(k){const d=TR[k],mx=Math.max(...d.rows.flatMap(r=>[r[2],r[4]]));
+ $("#trChart").innerHTML=d.rows.map(r=>`<div><div style="font-weight:700;margin-bottom:4px">${r[0]} <span class="muted small">(${d.unit})</span></div>
+  ${[[r[1],r[2],"var(--amber)"],[r[3],r[4],"var(--green2)"]].map(p=>`<div class="brow" style="cursor:default;grid-template-columns:100px 1fr 60px"><div class="l">${p[0]}</div><div class="bar-track"><div class="bar-fill" style="background:${p[2]}" data-w="${p[1]/mx*100}"></div></div><div class="v">${p[1]}</div></div>`).join("")}</div>`).join("");
+ requestAnimationFrame(()=>requestAnimationFrame(()=>$$("#trChart .bar-fill").forEach(b=>b.style.width=b.dataset.w+"%")));
+ $("#trNote").innerHTML=d.note+`<sup class="cite"><a href="#s${d.cite}" data-n="${d.cite}">[${d.cite}]</a></sup>`}
+drawTR("fao");tabs($("#trTabs"),b=>drawTR(b.dataset.p));
+
+/* waffle */
+$("#waffle").innerHTML=Array.from({length:100},()=>"<i></i>").join("");
+const WF={32:["32% of Earth’s land is forest: 4.14 billion ha, or 0.5 ha per person. Nearly half of it is in the tropics.","on"],20:["About 813 M ha of forest (≈20%) sits in protected areas, up 251 M ha since 1990.","on2"],8:["Planted forests are ~312 M ha (≈8% of forest area). The other 92% is naturally regenerating forest.","on2"]};
+function setWF(n){const [t,c]=WF[n];$$("#waffle i").forEach((e,i)=>{e.className="";setTimeout(()=>{if(i<n)e.className=c},i*8)});$("#wfNote").textContent=t}
+setWF(32);tabs($("#wfTabs"),b=>setWF(+b.dataset.w));
+
+/* calculator */
+function calc(){const ha=Math.max(0,+$("#haIn").value||0);const items=[["Football fields",fmt(ha/FIELD_HA),"105 × 68 m pitch"],["Square km",fmt(ha/100),"1 km² = 100 ha"],["Denmark",(ha/4300000).toFixed(2)+"×","≈ 4.3 M ha"],["United Kingdom",(ha/24400000).toFixed(2)+"×","≈ 24.4 M ha"]];
+ $("#calcOut").innerHTML=items.map(i=>`<div class="card flat" style="padding:12px"><div class="small muted">${i[0]}</div><div style="font:700 1.4rem var(--serif)">${i[1]}</div><div class="small muted">${i[2]}</div></div>`).join("")}
+$("#haIn").addEventListener("input",calc);$("#preset").addEventListener("change",e=>{$("#haIn").value=e.target.value;calc()});calc();
+
+/* ---------- solutions ---------- */
+const SOL=[
+ ["🛡","Protect land","Grant legal land rights to Indigenous communities to prevent illegal logging.","Protected areas cover about 813 M ha, roughly 20% of the world’s forests, up 251 M ha since 1990.",1],
+ ["🌱","Reforestation","Plant new trees and restore degraded landscapes to rebuild destroyed ecosystems.","Forests expanded by 6.78 M ha a year in 2015–2025, but that is down from 9.88 M ha a year in 2000–2015.",1],
+ ["🚜","Change farming","Switch to sustainable agriculture and stop clearing forests for livestock pasture.","Permanent agriculture is about 94% of permanent deforestation, so farming is where the biggest gains are.",6],
+ ["⚖","Enforce laws","Strengthen regulations and penalise companies involved in illegal logging or trade.","Brazil’s non-fire primary forest loss fell 41% in 2025, a record low, but fire risk means enforcement alone will not be enough.",2]
+];
+$("#solCards").innerHTML=SOL.map(s=>`<div class="card reveal"><div style="font-size:2rem">${s[0]}</div><h3>${s[1]}</h3><p class="small">${s[2]}</p><p class="small muted" style="margin:0"><b>Evidence:</b> ${s[3]}<sup class="cite"><a href="#s${s[4]}" data-n="${s[4]}">[${s[4]}]</a></sup></p></div>`).join("");
+$$("#solCards .reveal").forEach(el=>io.observe(el));
+const PL=["Use less paper and choose recycled or certified paper","Eat less beef and check labels for palm oil and soy","Choose certified wood and furniture","Recycle cardboard, paper and packaging","Support a tree-planting or forest-protection group","Learn how forests are protected where you live","Share one fact from this portal with a friend","Report illegal logging or burning to local authorities"];
+let pl=store.get("pledge",[]);
+function drawPL(){$("#plList").innerHTML=PL.map((p,i)=>`<label class="chk" style="border-radius:10px;padding:10px 12px"><input type="checkbox" data-i="${i}" ${pl.includes(i)?"checked":""}>${p}</label>`).join("");$$("#plList input").forEach(c=>c.onchange=()=>{const i=+c.dataset.i;pl=pl.filter(x=>x!==i);if(c.checked)pl.push(i);store.set("pledge",pl);up()});up()}
+function up(){$("#plN").textContent=pl.length+" of "+PL.length;$("#plBar").style.width=pl.length/PL.length*100+"%"}
+drawPL();
+
+/* ---------- quiz ---------- */
+const QZ=[
+ ["How much of Earth’s land is covered by forest, according to FAO’s 2025 assessment?",["About 10%","About 32%","About 60%","About 75%"],1,"4.14 billion hectares, 32% of land."],
+ ["What caused 42% of global tree cover loss in 2025?",["Mining","Urban growth","Fire","Pests"],2,"Fire. In 2024 it caused nearly half of tropical primary forest loss."],
+ ["Which driver accounts for most permanent deforestation worldwide?",["Permanent agriculture","Logging","Mining","Roads"],0,"Permanent agriculture is about 94% of the permanent deforestation share (172 M ha)."],
+ ["Which country had the largest 2024 tree cover loss in the Global Forest Watch data?",["Brazil","Canada","Russia","Indonesia"],2,"Russia, with about 5.18 M ha, narrowly ahead of Canada (5.16 M ha). Most of it is wildfire."],
+ ["What happened to tropical primary forest loss between 2024 and 2025?",["Doubled","Fell 36%","Unchanged","Rose 10%"],1,"It fell 36%, from 6.7 to 4.3 M ha, but remains 46% above a decade ago."],
+ ["According to the World Bank, forests are habitat for what share of terrestrial species?",["About 20%","About 50%","Over 80%","100%"],2,"Over 80%."],
+ ["How fast has global deforestation fallen since the 1990s (FAO)?",["17.6 → 10.9 M ha/yr","10 → 20 M ha/yr","Not at all","1 → 0.1 M ha/yr"],0,"From 17.6 M ha a year in the 1990s to 10.9 M ha a year in 2015–2025."],
+ ["Which statement about “tree cover loss” is correct?",["It equals permanent deforestation","It includes fire and logging where trees may regrow","It only counts illegal logging","It only counts rainforests"],1,"It includes temporary loss, so it is larger than permanent deforestation."]
+];
+let qi=0,qs=0,ans=false;
+function drawQ(){const q=QZ[qi];ans=false;$("#qN").textContent=`Question ${qi+1} of ${QZ.length}`;$("#qS").textContent="Score: "+qs;$("#qBar").style.width=qi/QZ.length*100+"%";$("#qQ").textContent=q[0];$("#qE").style.display="none";$("#qNext").style.display="none";$("#qReset").style.display="none";
+ $("#qO").innerHTML=q[1].map((o,i)=>`<button class="opt" data-i="${i}">${esc(o)}</button>`).join("");
+ $$("#qO .opt").forEach(b=>b.onclick=()=>{if(ans)return;ans=true;const i=+b.dataset.i;if(i===q[2])qs++;$$("#qO .opt").forEach((x,j)=>{x.disabled=true;if(j===q[2])x.classList.add("right");else if(x===b)x.classList.add("wrong")});$("#qE").style.display="block";$("#qE").textContent=(i===q[2]?"Correct. ":"Not quite. ")+q[3];$("#qS").textContent="Score: "+qs;$("#qNext").style.display="inline-flex";$("#qNext").textContent=qi===QZ.length-1?"See result":"Next →"})}
+$("#qNext").onclick=()=>{if(qi<QZ.length-1){qi++;drawQ()}else{$("#qBar").style.width="100%";$("#qN").textContent="Finished";$("#qQ").textContent=`You scored ${qs} out of ${QZ.length}`;$("#qO").innerHTML="";$("#qE").style.display="block";$("#qE").textContent=qs>=7?"Excellent. You could teach this topic.":qs>=4?"Good work. Revisit the sections above for the ones you missed.":"A good start. Explore the sections above and try again.";$("#qNext").style.display="none";$("#qReset").style.display="inline-flex"}};
+$("#qReset").onclick=()=>{qi=0;qs=0;drawQ()};drawQ();
+
+/* ---------- glossary ---------- */
+const GL=[["Deforestation","Permanent clearing of forest so the land can be used for something else, such as farming, mining or building."],["Tree cover loss","Removal of trees at least 5 m tall as seen by satellite, from any cause, including fire and harvest. Trees may regrow."],["Primary forest","Naturally regenerated forest of native species with no clear signs of past human activity. Hard to replace once lost."],["Reforestation","Replanting trees on land that was recently forested."],["Afforestation","Planting forest where there was none for a long time."],["Net forest loss","Forest lost minus forest gained through planting and natural regrowth."],["Shifting cultivation","Rotational farming where small plots are cleared, farmed for a few years, then left to regrow."],["Carbon sink","A system that absorbs more carbon than it releases. Healthy forests are major sinks."],["Zoonotic disease","An infectious disease that jumps from animals to people."],["Biodiversity","The variety of life in an area: species, genes and ecosystems."],["Hectare (ha)","10,000 m², about 1.4 football fields. 1 million ha = 10,000 km²."],["PRODES / DETER","INPE’s Brazilian systems: PRODES gives the official annual Amazon deforestation rate; DETER gives near-real-time alerts."],["Glasgow Leaders’ Declaration","A 2021 pledge by 140+ countries to halt and reverse forest loss and land degradation by 2030."],["Transpiration","Release of water vapour by plants; helps drive rainfall."]];
+function drawG(){const q=$("#gQ").value.toLowerCase();$("#gList").innerHTML=GL.filter(g=>(g[0]+g[1]).toLowerCase().includes(q)).map(g=>`<div class="card flat" style="padding:14px 16px"><b>${g[0]}</b><p class="small muted" style="margin:4px 0 0">${g[1]}</p></div>`).join("")||'<p class="muted">No terms match.</p>'}
+$("#gQ").addEventListener("input",drawG);drawG();
+
+/* ---------- fact-check ---------- */
+const FC=[
+ ["Approximately 1.6 billion people live in forests and rural areas / are stripped of food and income","warn","Needs rewording","The World Bank estimates 300–350 million people live in or near forests and largely depend on them; over a billion rely on forests for work, products or income [10]. The 1.6 billion figure is about reliance, not about people who lose everything."],
+ ["About 42–50 million people work in forestry and timber","warn","Unverified","We could not confirm this range in the sources we re-checked. Cite a specific FAO or ILO publication or present it as an estimate."],
+ ["Forests hold 70–80% (and elsewhere 80%) of land animals and plants","warn","Make consistent","The World Bank states forests are habitat for over 80% of terrestrial species [10]. The slides use both 70–80% and 80%; use one."],
+ ["Russia 92.1 M ha, Brazil 76.2 M ha, Canada 68.9 M ha, US 51 M ha, Indonesia 33 M ha","warn","Label period","Brazil and Canada sum to 73.1 and 62.5 M ha for 2001–2024 [7], consistent with the slide if 2025 is included. State the period. Russia, US and Indonesia were not reproduced."],
+ ["Brazil’s losses are driven by cattle ranching, agriculture and fires","ok","Supported","Permanent agriculture drives 72% of loss in Latin America; fires drove 66% of Brazil’s 2024 primary forest loss [4][6]."],
+ ["Russia’s losses are driven by wildfires and logging","ok","Supported","Wildfire accounts for 74% of Russia’s loss (68 M ha) [6]."],
+ ["Rising global forest loss, 2001–2025 (chart)","ok","Supported","Values run from 13.3 M ha (2001) to 25.4 M ha (2025) and sum to 541.6 M ha, matching WRI’s total [6]. Add that 2025 fell about 14% from the 2024 peak [2][4]."],
+ ["Trees absorb CO₂; cutting or burning them releases it","ok","Supported","Forests remove ~16 Gt CO₂ a year; tree cover loss emits ~8.1 Gt a year on average [10]."],
+ ["Deforestation can increase zoonotic disease risk","info","Plausible, add a source","Widely discussed by health researchers; add a peer-reviewed or WHO citation before presenting it as a firm claim."],
+ ["Sources: Google, Google AI, ChatGPT","bad","Replace","These are tools, not references. Use the sources listed above."]
+];
+$("#fcBody").innerHTML=FC.map(r=>`<tr><td>${esc(r[0])}</td><td><span class="badge b-${r[1]}">${r[2]}</span></td><td class="small">${esc(r[3]).replace(/\[(\d+)\]/g,'<sup class="cite"><a href="#s$1" data-n="$1">[$1]</a></sup>')}</td></tr>`).join("");
+
+/* citation */
+$("#btnCite").onclick=()=>{const t="Alvin, Lily, Alma & Vani. (2026). Deforestation Explained: Research Portal [Interactive website]. Retrieved 8 October 2026.";(navigator.clipboard?navigator.clipboard.writeText(t):Promise.reject()).then(()=>$("#citeMsg").textContent="Copied.").catch(()=>{$("#citeMsg").textContent=t})};
+
+/* ---------- search overlay ---------- */
+const ov=$("#ov"),oQ=$("#oQ");
+const open=()=>{ov.classList.add("open");oQ.value="";$("#oR").innerHTML="";oQ.focus()},close=()=>ov.classList.remove("open");
+$("#btnSearch").onclick=open;ov.addEventListener("click",e=>{if(e.target===ov)close()});
+addEventListener("keydown",e=>{if(e.key==="Escape")close();if((e.key==="/"&&!/INPUT|SELECT|TEXTAREA/.test(document.activeElement.tagName))||((e.ctrlKey||e.metaKey)&&e.key.toLowerCase()==="k")){e.preventDefault();open()}});
+oQ.addEventListener("input",()=>{const q=oQ.value.trim().toLowerCase();if(q.length<2){$("#oR").innerHTML="";return}
+ const out=[];$$("main p, main li, main td, main summary, main h3, main .stat span").forEach(el=>{if(out.length>=14||el.closest("#ov"))return;const t=el.textContent.replace(/\s+/g," ").trim();const i=t.toLowerCase().indexOf(q);if(i<0||t.length<12)return;const sec=el.closest("section"),h=sec&&$("h2",sec)?$("h2",sec).textContent:"Home";const s=Math.max(0,i-50),sn=(s?"…":"")+t.slice(s,i+q.length+90)+"…";out.push({el,h,sn,i:i-s+(s?1:0)})});
+ $("#oR").innerHTML=out.length?out.map((o,k)=>`<a class="hit" href="#" data-k="${k}"><small>${esc(o.h)}</small>${esc(o.sn.slice(0,o.i)).replace(/$/,"")}<mark>${esc(o.sn.slice(o.i,o.i+q.length))}</mark>${esc(o.sn.slice(o.i+q.length))}</a>`).join(""):'<p class="muted">No results.</p>';
+ $$("#oR .hit").forEach(a=>a.onclick=e=>{e.preventDefault();const o=out[+a.dataset.k];close();const p=o.el.closest("[hidden]");if(p)p.hidden=false;const d=o.el.closest("details");if(d)d.open=true;o.el.scrollIntoView({behavior:"smooth",block:"center"});o.el.classList.remove("flash");void o.el.offsetWidth;o.el.classList.add("flash")})});
+</script>
+</body>
+</html>
